@@ -1,5 +1,6 @@
 N = int(input())
 
+# ()の判定はcountを'('=>+1, ')'=>-1 として負にならずに最終的に0となればよい
 def is_valid(s):
     count = 0
     for c in s:
@@ -11,6 +12,7 @@ def is_valid(s):
             return False
     return count == 0
 
+# ビット全探索
 for bit in range((1<<N)):
     S = ''
 
