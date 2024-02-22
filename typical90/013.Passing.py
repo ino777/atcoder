@@ -1,3 +1,7 @@
+"""
+ダイクストラ法
+"""
+
 N, M = map(int, input().split())
 
 graph = [{} for _ in range(N)]
@@ -6,60 +10,24 @@ for i in range(M):
     graph[A-1][B-1] = C
     graph[B-1][A-1] = C
 
-ou = [-1]*N
-re = [-1]*N
 
-from collections import deque
+import heapq
 
-stack = deque([0])
-ou[0] = 0
-# 幅優先探索
-while stack:
-    v = stack.popleft()
-    nex = list(graph[v].keys())
+def dijkstra(n, start):
+    dist = [10**9]*n
+    dist[start] = 0
+    q = [(0, start)]
+    while len(q)>0:
+        _, v = heapq.heappop(q)
 
-    # 訪問済みを先に回す
-    fr = []
-    bk = []
-    for e in nex:
-        if re[e] == -1:
-            bk.append(e)
-        else:
-            fr.append(e)
-    nex = fr + bk
+        for nex in graph[v].keys():
+            if dist[v] + graph[v][nex] < dist[nex]:
+                dist[nex] = dist[v] + graph[v][nex]
+                heapq.heappush(q, (dist[nex], nex))
+    return dist
 
-    for e in nex:
-        if ou[e] == -1:
-            stack.append(e)
-            ou[e] = ou[v] + graph[v][e]
-        else:
-            ou[v] = min(ou[v], ou[e]+graph[e][v])
-            ou[e] = min(ou[e], ou[v]+graph[v][e])
-
-
-stack = deque([N-1])
-re[N-1] = 0
-while stack:
-    v = stack.popleft()
-    nex = list(graph[v].keys())
-
-    # 訪問済みを先に回す
-    fr = []
-    bk = []
-    for e in nex:
-        if re[e] == -1:
-            bk.append(e)
-        else:
-            fr.append(e)
-    nex = fr + bk
-
-    for e in nex:
-        if re[e] == -1:
-            stack.append(e)
-            re[e] = re[v] + graph[v][e]
-        else:
-            re[v] = min(re[v], re[e]+graph[e][v])
-            re[e] = min(re[e], re[v]+graph[v][e])
+ou = dijkstra(N, 0)
+re = dijkstra(N, N-1)
 
 
 for k in range(N):
